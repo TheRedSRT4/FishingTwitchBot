@@ -1,0 +1,12 @@
+/.gradle
+/.idea
+/build
+*.iml
+*.ipr
+*.iws
+/resources
+/core/src/main/kotlin/dev/theredsrt4/fish/Keys.kt
+/stats/build
+ttva.secret
+/core/build
+/jvlia
