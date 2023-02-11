@@ -8,12 +8,17 @@ import com.github.twitch4j.chat.events.channel.ChannelMessageEvent
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.net.URI
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
 
 
 /** Holds the client */
 internal val twitchClient: ITwitchClient = createClient()
-internal val channel = "theredsrt4"
+internal val channel = "JVLIA"
 internal var listening = false
+internal val version = "1.0 BETA"
 
 /** Check to see if Channel is offline **/
 private fun isOffline(): Boolean{
@@ -29,6 +34,11 @@ fun main() {
     val eventMang = twitchClient.eventManager
     GlobalScope.launch {
         while(true){
+            HttpClient.newBuilder().build()
+                .send(HttpRequest.newBuilder()
+                    .uri(URI.create(Keys.HeartBeat.text))
+                    .build(), HttpResponse.BodyHandlers.ofString())
+            println("[Fish] Heartbeat Sent - Yo")
             if(isOffline() && !listening) {
                 println("[Fish] Channel is Offline - Enabling...")
                 twitchClient.chat.joinChannel(channel)

@@ -10,16 +10,16 @@ import java.util.*
 import kotlin.random.Random
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
-import kotlin.random.nextInt
 
 class OnMessage {
 
     private val DateFormatter = DateTimeFormatterBuilder().parseCaseInsensitive()
         .appendValue(ChronoField.YEAR, 4).appendValue(ChronoField.MONTH_OF_YEAR, 2)
         .appendValue(ChronoField.DAY_OF_MONTH, 2).toFormatter()
-    val cooldownTime = 10
+    val cooldownTime = 5
     val cooldownMap = ConcurrentHashMap<String, Long>()
     var size = 0
+    var rare = 0
     val fishchart = FishChart(channel, Database.connect(
         Keys.DATABASE_IP.text, driver = "org.postgresql.Driver", user = Keys.DATABASE_USER.text, password = Keys.DATABASE_PWD.text))
 
@@ -50,21 +50,37 @@ class OnMessage {
             if (lastUse == null || currentTime - lastUse >= TimeUnit.SECONDS.toMillis(cooldownTime.toLong())) {
                 cooldownMap[event.user.name] = currentTime
 
-                //caught a fish!
+                /** Caught a Fish **/
+                //region Caught A Fish
                 if (distance == 37) {
                     val date = getDateInt()
                     size = Random.nextInt(1, 200)
-                    event.twitchChat.sendMessage(
-                        event.channel.name, String.format(
-                            "@%s, PogU you caught a %s lb fish!",
-                            event.user.name,
-                            size.toString()
+                    rare = Random.nextInt(1, 1000)
+                    if(rare == 752){
+                        event.twitchChat.sendMessage(
+                            event.channel.name, String.format(
+                                "@s, PogU you caught a RARE Fish! It was %s lb fish!",
+                                event.user.name,
+                                size.toString()
+                            )
                         )
-                    )
+                        println("[Fish] Adding ${event.user.name}'s ${size}lb fish to database...")
+                        fishchart.AddCatch(date, event.user.name, size, true)
+                    }
+                    else{
+                        event.twitchChat.sendMessage(
+                            event.channel.name, String.format(
+                                "@%s, PogU you caught a %s lb fish!",
+                                event.user.name,
+                                size.toString()
+                            )
+                        )
 
-                    println("[Fish] Adding ${event.user.name}'s ${size}lb fish to database...")
-                    fishchart.AddCatch(date, event.user.name, size)
-                } else {
+                        println("[Fish] Adding ${event.user.name}'s ${size}lb fish to database...")
+                        fishchart.AddCatch(date, event.user.name, size, false)
+                    }
+                }//endregion
+                else {
                     event.twitchChat.sendMessage(
                         event.channel.name, String.format(
                             "@%s, try again (%s feet away)",
@@ -81,7 +97,7 @@ class OnMessage {
             }
         }
         /** Fish command */
-        if (event.message.startsWith("!fish")) {
+        if (event.message.startsWith("!fishing")) {
             /** Fish Top command */
             if(event.message.contains("top")) {
                 event.twitchChat.sendMessage(channel, fishchart.getTopCaught())
@@ -89,7 +105,7 @@ class OnMessage {
             /** Fish Count command */
             else if(event.message.contains("count"))
             {
-                if(fishchart.getTotalCaught() == "null")
+                if(fishchart.getTotalCaught() == 0)
                 {
                     event.twitchChat.sendMessage(
                         event.channel.name, String.format(
@@ -99,14 +115,32 @@ class OnMessage {
                 }
                 else{
                     event.twitchChat.sendMessage(event.channel.name, String.format(
-                        "@%s, Total Fish Caught: %s", event.user.name, fishchart.getTotalCaught()
+                        "@%s, Total Fish Caught: %s Rare: %s", event.user.name, fishchart.getTotalCaught(), fishchart.getGoldCaught()
                     ))
                 }
+            }
+            /** Fish OpenSource command */
+            else if(event.message.contains("opensource")){
+                    event.twitchChat.sendMessage(
+                        event.channel.name, String.format(
+                            "@%s, This project is completely open source! https://github.com/TheRedSRT4/FishingTwitchBot",
+                            event.user.name
+                        )
+                    )
+            }
+            /** Fish About command **/
+            else if(event.message.contains("about")){
+                event.twitchChat.sendMessage(
+                    event.channel.name, String.format(
+                        "@%s, Fishing Bot Verison: %s     This bot allow you to fish in offline chat only. You have a 1/100 chance of catching a fish. Your fish's weight can be between 1-200. You also have a chance to get a rare fish (1/1000).    Bot Created by TheRedSRT4.    Emotes made by CrenoHD.    Please report all issues to me on Discord: TheRedSRT4#9652",
+                        event.user.name, version
+                    )
+                )
             }
             /** Fish command (without anything after) **/
             else{
                 event.twitchChat.sendMessage(channel, String.format(
-                    "@%s, Available Commands: !fish top/count", event.user.name
+                    "@%s, to fish, just type 'fishing'. Available Commands: !fishing top/count/admin/opensource/about", event.user.name
                 ))
             }
         }
