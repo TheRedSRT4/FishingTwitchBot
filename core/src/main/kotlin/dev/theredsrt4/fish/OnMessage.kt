@@ -42,7 +42,8 @@ class OnMessage {
         /** if Fishing emote is displayed **/
         if (event.message.startsWith("fishing"))
         {
-            val distance = Random.nextInt(1,100)
+            val chance = Random.nextInt(1,10)
+            val distance = Random.nextInt(1,50)
             val currentTime = System.currentTimeMillis()
             val lastUse = cooldownMap[event.user.name]
 
@@ -52,11 +53,11 @@ class OnMessage {
 
                 /** Caught a Fish **/
                 //region Caught A Fish
-                if (distance == 37) {
+                if (chance == 7) {
                     val date = getDateInt()
                     size = Random.nextInt(1, 200)
-                    rare = Random.nextInt(1, 1000)
-                    if(rare == 752){
+                    rare = Random.nextInt(1, 50)
+                    if(rare == 37){
                         event.twitchChat.sendMessage(
                             event.channel.name, String.format(
                                 "@s, PogU you caught a RARE Fish! It was %s lb fish!",
@@ -123,7 +124,7 @@ class OnMessage {
             else if(event.message.contains("opensource")){
                     event.twitchChat.sendMessage(
                         event.channel.name, String.format(
-                            "@%s, This project is completely open source! https://github.com/TheRedSRT4/FishingTwitchBot",
+                            "@%s, This project is completely open source! See TheRedSRT4 on Github!",
                             event.user.name
                         )
                     )
@@ -132,7 +133,7 @@ class OnMessage {
             else if(event.message.contains("about")){
                 event.twitchChat.sendMessage(
                     event.channel.name, String.format(
-                        "@%s, Fishing Bot Verison: %s     This bot allow you to fish in offline chat only. You have a 1/100 chance of catching a fish. Your fish's weight can be between 1-200. You also have a chance to get a rare fish (1/1000).    Bot Created by TheRedSRT4.    Emotes made by CrenoHD.    Please report all issues to me on Discord: TheRedSRT4#9652",
+                        "@%s, Fishing Bot Verison: %s     This bot allow you to fish in offline chat only. You have a 10% chance of catching a fish. Your fish's weight can be between 1-200. You also have a chance to get a rare fish (2%).    Bot Created by TheRedSRT4.    Emotes made by CrenoHD.    Please report all issues to me on Discord: TheRedSRT4#9652",
                         event.user.name, version
                     )
                 )
