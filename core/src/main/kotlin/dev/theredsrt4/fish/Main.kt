@@ -18,7 +18,7 @@ import java.net.http.HttpResponse
 internal val twitchClient: ITwitchClient = createClient()
 internal val channel = "JVLIA"
 internal var listening = false
-internal val version = "1.1 BETA"
+internal const val version = "1.2 BETA"
 
 /** Check to see if Channel is offline **/
 private fun isOffline(): Boolean{

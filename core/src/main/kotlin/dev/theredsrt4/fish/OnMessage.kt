@@ -133,7 +133,7 @@ class OnMessage {
             else if(event.message.contains("about")){
                 event.twitchChat.sendMessage(
                     event.channel.name, String.format(
-                        "@%s, Fishing Bot Verison: %s     This bot allow you to fish in offline chat only. You have a 10% chance of catching a fish. Your fish's weight can be between 1-200. You also have a chance to get a rare fish (2%).    Bot Created by TheRedSRT4.    Emotes made by CrenoHD.    Please report all issues to me on Discord: TheRedSRT4#9652",
+                        "@%s, Fishing Bot Verison: %s     This bot allow you to fish in offline chat only. You have a 1-10 chance of catching a fish. Your fish's weight can be between 1-200. You also have a chance to get a rare fish (1-50).    Bot Created by TheRedSRT4.    Emotes made by CrenoHD.    Please report all issues to me on Discord: TheRedSRT4#9652",
                         event.user.name, version
                     )
                 )
