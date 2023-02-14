@@ -33,12 +33,6 @@ class OnMessage {
     }
 
     fun handleMessages(event: ChannelMessageEvent) {
-
-        /** Admin Commands **/
-        if(event.user.name.equals("theredsrt4"))
-        {
-
-        }
         /** if Fishing emote is displayed **/
         if (event.message.startsWith("fishing"))
         {
@@ -60,7 +54,7 @@ class OnMessage {
                     if(rare == 37){
                         event.twitchChat.sendMessage(
                             event.channel.name, String.format(
-                                "@s, PogU you caught a RARE Fish! It was %s lb fish!",
+                                "@%s, PogU you caught a RARE Fish! It was %s lb fish!",
                                 event.user.name,
                                 size.toString()
                             )
@@ -104,8 +98,7 @@ class OnMessage {
                 event.twitchChat.sendMessage(channel, fishchart.getTopCaught())
             }
             /** Fish Count command */
-            else if(event.message.contains("count"))
-            {
+            else if(event.message.contains("count")) {
                 if(fishchart.getTotalCaught() == 0)
                 {
                     event.twitchChat.sendMessage(
@@ -137,6 +130,17 @@ class OnMessage {
                         event.user.name, version
                     )
                 )
+            }
+            /** Fish Admin Command **/
+            else if(event.message.contains("admin")) {
+                if(event.user.name.equals("theredsrt4")){
+                    event.twitchChat.sendMessage(channel, "No admin commands yet buddy..")
+                }
+                else{
+                    event.twitchChat.sendMessage(channel, String.format(
+                        "@%s, good try there buddy ol' pal. You aren't an admin. smh", event.user.name
+                    ))
+                }
             }
             /** Fish command (without anything after) **/
             else{

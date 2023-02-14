@@ -18,7 +18,7 @@ import java.net.http.HttpResponse
 internal val twitchClient: ITwitchClient = createClient()
 internal val channel = "JVLIA"
 internal var listening = false
-internal const val version = "1.2 BETA"
+internal const val version = "1.3 BETA"
 
 /** Check to see if Channel is offline **/
 private fun isOffline(): Boolean{
@@ -34,6 +34,7 @@ fun main() {
     val eventMang = twitchClient.eventManager
     GlobalScope.launch {
         while(true){
+            println("[Fish] Version $version")
             HttpClient.newBuilder().build()
                 .send(HttpRequest.newBuilder()
                     .uri(URI.create(Keys.HeartBeat.text))
@@ -50,9 +51,14 @@ fun main() {
                 listening = true
             }
             else if(!isOffline() && listening){
+                /** Just a little thing for JVLIA **/
+                if(channel == "JVLIA")
+                {
+                    twitchClient.chat.sendMessage(channel, "ope streamer is live gotta go jvliaLEAVE")
+                }
+
                 println("[Fish] Channel is Offline - Disabling...")
                 twitchClient.chat.leaveChannel(channel)
-                eventMang.close()
                 listening = false
             }
             //update site

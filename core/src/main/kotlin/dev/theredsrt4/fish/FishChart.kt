@@ -2,6 +2,7 @@ package dev.theredsrt4.fish
 
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
+import javax.security.sasl.AuthorizeCallback
 
 class FishChart (channel: String, private val database: Database){
     private val fishTable = FishTable(channel)
@@ -48,7 +49,7 @@ class FishChart (channel: String, private val database: Database){
             }
         }
     }
-    fun getTotalCaught(): Int {
+    public fun getTotalCaught(): Int {
         var i = 0
         transaction(database){
             val result = fishTable.slice(fishTable.count.sum()).selectAll()
@@ -75,6 +76,9 @@ class FishChart (channel: String, private val database: Database){
         return i
     }
 
+    fun forEachDescending(batch: Int, count: Int, callback: (Iterable<FishUser>) -> Unit){
+    }
+
 }
 class FishTable(channel: String): Table("${channel}_fish"){
     val id = integer("id").autoIncrement() //for batch
@@ -85,3 +89,4 @@ class FishTable(channel: String): Table("${channel}_fish"){
     val last = integer("last")
     val goldfish = integer("goldfish")
 }
+data class FishUser(val name: String, val count: Int, val biggest: Int, val goldfish: Int)
