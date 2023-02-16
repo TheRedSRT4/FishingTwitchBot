@@ -1,5 +1,7 @@
 package dev.theredsrt4.fish
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.github.philippheuer.credentialmanager.domain.OAuth2Credential
 import com.github.twitch4j.ITwitchClient
 import com.github.twitch4j.TwitchClient
@@ -12,13 +14,17 @@ import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import kotlin.system.exitProcess
 
+internal val configuration: Configuration =
+    loadConfiguration()
 
 /** Holds the client */
 internal val twitchClient: ITwitchClient = createClient()
-internal val channel = "JVLIA"
 internal var listening = false
-internal const val version = "1.3 BETA"
+
+
+internal val channel = configuration.bot["channel"]
 
 /** Check to see if Channel is offline **/
 private fun isOffline(): Boolean{
@@ -34,12 +40,15 @@ fun main() {
     val eventMang = twitchClient.eventManager
     GlobalScope.launch {
         while(true){
-            println("[Fish] Version $version")
-            HttpClient.newBuilder().build()
-                .send(HttpRequest.newBuilder()
-                    .uri(URI.create(Keys.HeartBeat.text))
-                    .build(), HttpResponse.BodyHandlers.ofString())
-            println("[Fish] Heartbeat Sent - Yo")
+            println("[Fish] Version " + configuration.bot["version"])
+
+            if(configuration.heartbeat){
+                HttpClient.newBuilder().build()
+                    .send(HttpRequest.newBuilder()
+                        .uri(URI.create(configuration.api["hbkey"]))
+                        .build(), HttpResponse.BodyHandlers.ofString())
+                println("[Fish] Heartbeat Sent - Yo")
+            }
             if(isOffline() && !listening) {
                 println("[Fish] Channel is Offline - Enabling...")
                 twitchClient.chat.joinChannel(channel)
@@ -72,7 +81,7 @@ private fun createClient(): TwitchClient {
     var clientBuilder = TwitchClientBuilder.builder()
     //region Chat related configuration
     val credential = OAuth2Credential(
-        "twitch", Keys.OAUTH.text
+        "twitch", configuration.credentials["irc"]
     )
     clientBuilder = clientBuilder
         .withChatAccount(credential)
@@ -81,11 +90,27 @@ private fun createClient(): TwitchClient {
 
     //region Api related configuration
     clientBuilder = clientBuilder
-        .withClientId(Keys.CLIENT_ID.text)
-        .withClientSecret(Keys.CLIENT_SECRET.text)
+        .withClientId(configuration.api["client_id"])
+        .withClientSecret(configuration.api["client_secret"])
         .withEnableHelix(true)
     //endregion
 
     // Build the client out of the configured builder
     return clientBuilder.build()
+}
+
+/** Load Config File **/
+private fun loadConfiguration(): Configuration{
+    val config: Configuration
+    val classloader = Thread.currentThread().contextClassLoader
+    val inputStream = classloader.getResourceAsStream("config.yaml")
+    val mapper = ObjectMapper(YAMLFactory())
+
+    try {
+        config = mapper.readValue(inputStream, Configuration::class.java)
+    }catch (ex:Exception){
+        println("Unable to load config file... Exiting")
+        exitProcess(1)
+    }
+    return config
 }

@@ -2,7 +2,6 @@ package dev.theredsrt4.fish
 
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
-import javax.security.sasl.AuthorizeCallback
 
 class FishChart (channel: String, private val database: Database){
     private val fishTable = FishTable(channel)
@@ -49,7 +48,7 @@ class FishChart (channel: String, private val database: Database){
             }
         }
     }
-    public fun getTotalCaught(): Int {
+    fun getTotalCaught(): Int {
         var i = 0
         transaction(database){
             val result = fishTable.slice(fishTable.count.sum()).selectAll()
@@ -75,7 +74,30 @@ class FishChart (channel: String, private val database: Database){
         }
         return i
     }
-
+    fun getUserCaught(username: String): Int?{
+        var count: Int? = null
+        transaction(database){
+            val query = fishTable.select { fishTable.name eq username }.limit(1)
+            count = query.firstOrNull()?.get(fishTable.count)
+        }
+        return count
+    }
+    fun getUserGold(username: String): Int?{
+        var gold: Int? = null
+        transaction(database){
+            val query = fishTable.select { fishTable.name eq username }.limit(1)
+            gold = query.firstOrNull()?.get(fishTable.goldfish)
+        }
+        return gold
+    }
+    fun getUserTop(username: String): Int?{
+        var biggest: Int? = null
+        transaction(database){
+            val query = fishTable.select{ fishTable.name eq username }.limit(1)
+            biggest = query.firstOrNull()?.get(fishTable.biggest)
+        }
+        return biggest
+    }
     fun forEachDescending(batch: Int, count: Int, callback: (Iterable<FishUser>) -> Unit){
     }
 
