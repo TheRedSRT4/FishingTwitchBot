@@ -1,9 +1,10 @@
 /.gradle
 /.idea
 /build
-/core/src/main/resources/
-/core/src/main/kotlin/dev/theredsrt4/fish/Keys.kt
+/core
 /core/build
 /jvlia
 TODO.txt
 /emotes
+/core/src/main/resources/
+/core/src/main/resources/config.yaml
