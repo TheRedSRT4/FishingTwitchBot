@@ -50,7 +50,7 @@ class OnMessage {
                 //region Caught A Fish
                 if (chance == 7) {
                     val date = getDateInt()
-                    size = Random.nextInt(1, 200)
+                    size = Random.nextInt(1, 201)
                     rare = Random.nextInt(1, 50)
                     if(rare == 37){
                         event.twitchChat.sendMessage(
