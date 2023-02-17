@@ -61,7 +61,7 @@ class OnMessage {
                             )
                         )
                         println("[Fish] Adding ${event.user.name}'s ${size}lb fish to database...")
-                        fishchart.AddCatch(date, event.user.name, size, true)
+                        fishchart.addCatch(date, event.user.name, size, true)
                     }
                     else{
                         event.twitchChat.sendMessage(
@@ -73,7 +73,7 @@ class OnMessage {
                         )
 
                         println("[Fish] Adding ${event.user.name}'s ${size}lb fish to database...")
-                        fishchart.AddCatch(date, event.user.name, size, false)
+                        fishchart.addCatch(date, event.user.name, size, false)
                     }
                 }//endregion
                 else {
@@ -168,7 +168,33 @@ class OnMessage {
             /** Fish Admin Command **/
             else if(event.message.contains("admin", ignoreCase = true)) {
                 if(event.user.name.equals("theredsrt4")){
-                    event.twitchChat.sendMessage(channel, "No admin commands yet buddy..")
+                    val args = event.message.split(" ")
+                    if(event.message.contains("AddCatch", ignoreCase = true))
+                    {
+                        val chatter = args[3]
+                        val size = args[4].toInt()
+                        var goldfish = false
+                        if(args[5] == "true")
+                        {
+                            goldfish = true
+                        }
+                        if(args[5] == "false"){
+                            goldfish = false
+                        }
+                        println("[Fish] Adding ${chatter}'s ${size}lb fish to database...")
+                        try {
+                            fishchart.addCatch(getDateInt(), chatter, size, goldfish)
+                            event.twitchChat.sendMessage(channel, "Successful Added To Database!")
+                        }
+                        catch (ex:Exception){
+                            println("[Fish] Ummm. I broke..")
+                            println(ex.toString())
+                            event.twitchChat.sendMessage(channel, "AN ERROR OCCURRED CHECK LOG")
+                        }
+                    }
+                    else{
+                        event.twitchChat.sendMessage(channel, "Admin commands: AddCatch chatter size goldfish")
+                    }
                 }
                 else{
                     event.twitchChat.sendMessage(channel, String.format(

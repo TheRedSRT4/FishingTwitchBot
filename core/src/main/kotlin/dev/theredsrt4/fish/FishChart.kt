@@ -1,7 +1,10 @@
 package dev.theredsrt4.fish
 
+import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.io.File
+
 
 class FishChart (channel: String, private val database: Database){
     private val fishTable = FishTable(channel)
@@ -12,7 +15,7 @@ class FishChart (channel: String, private val database: Database){
             SchemaUtils.createMissingTablesAndColumns(fishTable)
         }
     }
-    fun AddCatch(date: Int, chatter: String, size: Int, goldfish: Boolean){
+    fun addCatch(date: Int, chatter: String, size: Int, goldfish: Boolean){
         transaction(database){
             val row = fishTable.select {fishTable.name eq chatter }.firstOrNull()
             if(row != null){ //If chatter caught a fish before
@@ -99,6 +102,24 @@ class FishChart (channel: String, private val database: Database){
         return biggest
     }
     fun forEachDescending(batch: Int, count: Int, callback: (Iterable<FishUser>) -> Unit){
+        val total = getTotalCaught()
+        val list = arrayListOf<FishUser>()
+        var curr = 1
+        transaction(database){
+            val range = if(count >= total) total..total else total downTo count
+            for(i in range) {
+                fishTable.selectBatched { fishTable.count eq i }.forEach { it.forEach { row ->
+                    list.add(FishUser(row[fishTable.name], row[fishTable.count], row[fishTable.biggest], row[fishTable.goldfish]))
+
+                    if(curr++ > batch) {
+                        callback(list)
+                        list.clear()
+                        curr = 1
+                    }
+                }}
+            }
+            if(list.size != 0) callback(list)
+        }
     }
 
 }
