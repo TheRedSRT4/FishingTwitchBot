@@ -59,13 +59,23 @@ class FishChart (channel: String, private val database: Database){
         }
         return i
     }
-    fun getTopCaught(): String {
+    fun getTopWeightCaught(): String {
         var message = ""
         transaction(database) {
             val top3 = fishTable.selectAll().orderBy(fishTable.biggest, SortOrder.DESC).limit(3).map {
                 "${it[fishTable.name]} ${it[fishTable.biggest]}lbs"
             }
             message =  "Top 3 Catches: ${top3.joinToString(", ")}"
+        }
+        return message
+    }
+    fun getTopCountCaught(): String{
+        var message = ""
+        transaction(database) {
+            val top3 = fishTable.selectAll().orderBy(fishTable.count, SortOrder.DESC).limit(3).map {
+                "${it[fishTable.name]}: ${it[fishTable.count]}"
+            }
+            message =  "Top 3 Fisherman: ${top3.joinToString(", ")}"
         }
         return message
     }
@@ -92,14 +102,6 @@ class FishChart (channel: String, private val database: Database){
             gold = query.firstOrNull()?.get(fishTable.goldfish)
         }
         return gold
-    }
-    fun getUserTop(username: String): Int?{
-        var biggest: Int? = null
-        transaction(database){
-            val query = fishTable.select{ fishTable.name eq username }.limit(1)
-            biggest = query.firstOrNull()?.get(fishTable.biggest)
-        }
-        return biggest
     }
     fun forEachDescending(batch: Int, count: Int, callback: (Iterable<FishUser>) -> Unit){
         val total = getTotalCaught()

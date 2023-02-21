@@ -37,7 +37,8 @@ class OnMessage {
         /** if Fishing emote is displayed **/
         if (event.message.startsWith("fishing", ignoreCase = true))
         {
-            val chance = Random.nextInt(1,10)
+            val easteregg = Random.nextInt(1,4)
+            val chance = Random.nextInt(1,12)
             val distance = Random.nextInt(1,50)
             val currentTime = System.currentTimeMillis()
             val lastUse = cooldownMap[event.user.name]
@@ -45,7 +46,12 @@ class OnMessage {
             //Cooldown of 5 seconds
             if (lastUse == null || currentTime - lastUse >= TimeUnit.SECONDS.toMillis(cooldownTime.toLong())) {
                 cooldownMap[event.user.name] = currentTime
-
+                if(event.user.name == "Draggon__"){
+                    if(easteregg == 2){
+                        event.twitchChat.sendMessage(channel,"listen... don't you have enough fish...")
+                        return
+                    }
+                }
                 /** Caught a Fish **/
                 //region Caught A Fish
                 if (chance == 7) {
@@ -98,20 +104,17 @@ class OnMessage {
             if(event.message.contains("top", ignoreCase = true)) {
                 val args = event.message.split(" ")
                 if(args.size == 3){
-                    val username: String = args[2].replace("@", "")
-                    if(fishchart.getUserTop(username.lowercase()) == null){
-                        event.twitchChat.sendMessage(event.channel.name, String.format(
-                            "@%s, user not found in database ope!", event.user.name)
-                        )
+                    if(args[2] == "count")
+                    {
+                        event.twitchChat.sendMessage(channel, fishchart.getTopCountCaught())
                     }
-                    else{
-                        event.twitchChat.sendMessage(event.channel.name, String.format(
-                            "@%s, %s 's top fish is %s lbs!", event.user.name, username, fishchart.getUserTop(username.lowercase())
-                        ))
+                    if(args[2] == "size" || args[2] == "weight")
+                    {
+                        event.twitchChat.sendMessage(channel, fishchart.getTopWeightCaught())
                     }
                 }
-                if(args.size == 2){
-                    event.twitchChat.sendMessage(channel, fishchart.getTopCaught())
+                else{
+                    event.twitchChat.sendMessage(channel, "Usage of command is as follows: !fishing top count/weight/size")
                 }
             }
             /** Fish Count command */
@@ -160,7 +163,7 @@ class OnMessage {
             else if(event.message.contains("about", ignoreCase = true)){
                 event.twitchChat.sendMessage(
                     event.channel.name, String.format(
-                        "@%s, Fishing Bot Verison: %s     This bot allow you to fish in offline chat only. You have a 1-10 chance of catching a fish. Your fish's weight can be between 1-200. You also have a chance to get a rare fish (1-50).    Bot Created by TheRedSRT4.    Emotes made by CrenoHD.    Please report all issues to me on Discord: TheRedSRT4#9652",
+                        "@%s, Fishing Bot Verison: %s     This bot allow you to fish in offline chat only. You have a 1-12 chance of catching a fish. Your fish's weight can be between 1-200. You also have a chance to get a rare fish (1-50).    Bot Created by TheRedSRT4.    Emotes made by CrenoHD.    Please report all issues to me on Discord: TheRedSRT4#9652",
                         event.user.name, configuration.bot["version"]
                     )
                 )
