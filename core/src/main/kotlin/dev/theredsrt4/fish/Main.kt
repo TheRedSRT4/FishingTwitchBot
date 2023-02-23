@@ -66,11 +66,11 @@ fun main() {
     val LogChat = WriteChannelChatToConsole()
     val eventMang = twitchClient.eventManager
 
+    println("[Fish] Version " + configuration.bot["version"])
 
     //updateSite()
     GlobalScope.launch {
         while(true){
-            println("[Fish] Version " + configuration.bot["version"])
 
             if(configuration.heartbeat){
                 HttpClient.newBuilder().build()
@@ -91,7 +91,7 @@ fun main() {
             }
             else if(!isOffline() && listening){
                 /** Just a little thing for JVLIA **/
-                if(channel == "JVLIA")
+                if(channel == "JVLIA" || channel == "jvlia")
                 {
                     twitchClient.chat.sendMessage(channel, "ope streamer is live gotta go jvliaLEAVE")
                 }

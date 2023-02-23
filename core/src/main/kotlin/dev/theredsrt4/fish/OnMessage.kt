@@ -37,7 +37,7 @@ class OnMessage {
         /** if Fishing emote is displayed **/
         if (event.message.startsWith("fishing", ignoreCase = true))
         {
-            val easteregg = Random.nextInt(1,4)
+            val easteregg = Random.nextInt(1,5)
             val chance = Random.nextInt(1,12)
             val distance = Random.nextInt(1,50)
             val currentTime = System.currentTimeMillis()
@@ -46,11 +46,9 @@ class OnMessage {
             //Cooldown of 5 seconds
             if (lastUse == null || currentTime - lastUse >= TimeUnit.SECONDS.toMillis(cooldownTime.toLong())) {
                 cooldownMap[event.user.name] = currentTime
-                if(event.user.name == "draggon__"){
-                    if(easteregg == 2){
-                        event.twitchChat.sendMessage(channel,"listen... don't you have enough fish...")
-                        return
-                    }
+                if(fishchart.getUserCaught(event.user.name.lowercase())!! >= 1 && easteregg == 2) {
+                    event.twitchChat.sendMessage(channel, "listen... don't you have enough fish...")
+                    return
                 }
                 /** Caught a Fish **/
                 //region Caught A Fish
@@ -194,6 +192,10 @@ class OnMessage {
                             println(ex.toString())
                             event.twitchChat.sendMessage(channel, "AN ERROR OCCURRED CHECK LOG")
                         }
+                    }
+                    if(event.message.contains("rename", ignoreCase = true))
+                    {
+
                     }
                     else{
                         event.twitchChat.sendMessage(channel, "Admin commands: AddCatch chatter size goldfish")
