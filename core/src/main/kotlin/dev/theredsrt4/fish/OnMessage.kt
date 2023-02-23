@@ -46,7 +46,7 @@ class OnMessage {
             //Cooldown of 5 seconds
             if (lastUse == null || currentTime - lastUse >= TimeUnit.SECONDS.toMillis(cooldownTime.toLong())) {
                 cooldownMap[event.user.name] = currentTime
-                if(fishchart.getUserCaught(event.user.name.lowercase())!! >= 1 && easteregg == 2) {
+                if(fishchart.getUserCaught(event.user.name.lowercase())!! >= 200 && easteregg == 2) {
                     event.twitchChat.sendMessage(channel, "listen... don't you have enough fish...")
                     return
                 }
