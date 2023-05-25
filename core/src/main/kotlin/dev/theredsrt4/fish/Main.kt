@@ -43,10 +43,12 @@ private val objectMapper = jacksonObjectMapper()
 
 /** Check to see if Channel is offline **/
 private fun isOffline(): Boolean{
-    return twitchClient.helix.
+    return true
+}
+    /** return twitchClient.helix.
     getStreams("", null, null, null, null, null, null, listOf(channel)).execute()
         .streams.isEmpty()
-}
+} **/
 
 /** Main Run Function **/
 fun main() {
@@ -82,7 +84,7 @@ fun main() {
             if(isOffline() && !listening) {
                 println("[Fish] Channel is Offline - Enabling...")
                 twitchClient.chat.joinChannel(channel)
-                twitchClient.chat.sendMessage(channel, "PogU You wanna go fishing")
+                twitchClient.chat.sendMessage(channel, " Dinkdonk You wanna go fishing")
                 eventMang.onEvent(ChannelMessageEvent::class.java) { event: ChannelMessageEvent ->
                     onmessage.handleMessages(event)
                     LogChat.onChannelMessage(event)

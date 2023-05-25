@@ -37,7 +37,6 @@ class OnMessage {
         /** if Fishing emote is displayed **/
         if (event.message.startsWith("fishing", ignoreCase = true))
         {
-            val easteregg = Random.nextInt(1,5)
             val chance = Random.nextInt(1,12)
             val distance = Random.nextInt(1,50)
             val currentTime = System.currentTimeMillis()
@@ -46,10 +45,6 @@ class OnMessage {
             //Cooldown of 5 seconds
             if (lastUse == null || currentTime - lastUse >= TimeUnit.SECONDS.toMillis(cooldownTime.toLong())) {
                 cooldownMap[event.user.name] = currentTime
-                if(fishchart.getUserCaught(event.user.name.lowercase())!! >= 200 && easteregg == 2) {
-                    event.twitchChat.sendMessage(channel, "listen... don't you have enough fish...")
-                    return
-                }
                 /** Caught a Fish **/
                 //region Caught A Fish
                 if (chance == 7) {
@@ -59,7 +54,7 @@ class OnMessage {
                     if(rare == 37){
                         event.twitchChat.sendMessage(
                             event.channel.name, String.format(
-                                "@%s, PogU you caught a RARE Fish! It was %s lb fish!",
+                                "@%s, PogU you caught a RARE Fish! It was %s lb fish! PeepoGoldenFish",
                                 event.user.name,
                                 size.toString()
                             )
@@ -68,13 +63,24 @@ class OnMessage {
                         fishchart.addCatch(date, event.user.name, size, true)
                     }
                     else{
-                        event.twitchChat.sendMessage(
-                            event.channel.name, String.format(
-                                "@%s, PogU you caught a %s lb fish!",
-                                event.user.name,
-                                size.toString()
+                        if(size > 100) {
+                            event.twitchChat.sendMessage(
+                                event.channel.name, String.format(
+                                    "@%s, PogU you caught a %s lb fish! peepoMEDFish" ,
+                                    event.user.name,
+                                    size.toString()
+                                )
                             )
-                        )
+                        }
+                        else{
+                            event.twitchChat.sendMessage(
+                                event.channel.name, String.format(
+                                    "@%s, PogU you caught a %s lb fish! peepoSMOLFish" ,
+                                    event.user.name,
+                                    size.toString()
+                                )
+                            )
+                        }
 
                         println("[Fish] Adding ${event.user.name}'s ${size}lb fish to database...")
                         fishchart.addCatch(date, event.user.name, size, false)
@@ -190,7 +196,7 @@ class OnMessage {
                         catch (ex:Exception){
                             println("[Fish] Ummm. I broke..")
                             println(ex.toString())
-                            event.twitchChat.sendMessage(channel, "AN ERROR OCCURRED CHECK LOG")
+                            event.twitchChat.sendMessage(channel, "AN ERROR OCCURRED CHECK LOG PANIC")
                         }
                     }
                     if(event.message.contains("rename", ignoreCase = true))
