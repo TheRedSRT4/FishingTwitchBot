@@ -43,12 +43,11 @@ private val objectMapper = jacksonObjectMapper()
 
 /** Check to see if Channel is offline **/
 private fun isOffline(): Boolean{
-    return true
-}
-    /** return twitchClient.helix.
+
+    return twitchClient.helix.
     getStreams("", null, null, null, null, null, null, listOf(channel)).execute()
         .streams.isEmpty()
-} **/
+}
 
 /** Main Run Function **/
 fun main() {
