@@ -206,6 +206,9 @@ class OnMessage {
                     else{
                         event.twitchChat.sendMessage(channel, "Admin commands: AddCatch chatter size goldfish")
                     }
+                    if(event.message.contains("join", ignoreCase = true)){
+
+                    }
                 }
                 else{
                     event.twitchChat.sendMessage(channel, String.format(
